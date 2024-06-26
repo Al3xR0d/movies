@@ -1,0 +1,28 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 31px;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-item-active {
+  border-radius: 4px;
+  background: rgb(24, 144, 255);
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-item a {
+  color: white;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-prev button,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-next button {
+  color: white;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-disabled .ant-pagination-item-link,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-disabled:hover .ant-pagination-item-link {
+  color: grey;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-item-active:hover a {
+  color: white;
+}

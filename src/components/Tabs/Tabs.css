@@ -1,0 +1,14 @@
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-top > .ant-tabs-nav::before,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-bottom > .ant-tabs-nav::before,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-top > div > .ant-tabs-nav::before,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-bottom > div > .ant-tabs-nav::before {
+  border-bottom: 1px solid transparent;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs .ant-tabs-tab:hover {
+  background: rgb(24, 144, 255);
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs .ant-tabs-tab {
+  color: white;
+}
