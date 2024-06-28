@@ -26,3 +26,20 @@
 :where(.css-dev-only-do-not-override-zg0ahe).ant-pagination .ant-pagination-item-active:hover a {
   color: white;
 }
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: white;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-top > .ant-tabs-nav .ant-tabs-ink-bar,
+:where(.css-dev-only-do-not-override-zg0ahe).ant-tabs-top > div > .ant-tabs-nav .ant-tabs-ink-bar {
+  background: white;
+}
+
+.ant-tabs-nav-list > .ant-tabs-tab-active {
+  background: rgb(24, 144, 255);
+}
+
+.ant-tabs-tab-btn {
+  padding: 10px;
+}

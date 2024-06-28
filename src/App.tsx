@@ -1,19 +1,25 @@
 import './App.css';
-// import { SearchInput } from './components/Input/Input';
 import { CardList } from './components/CardList/CardList';
 import { TopTabs } from './components/Tabs/Tabs';
 import { useEffect, useState } from 'react';
 import { MovieApi } from './components/MovieApi/MovieApi';
 import { Alert } from 'antd';
-
-// import { Flex, Spin } from 'antd';
+import { Genres } from './types/types';
+import { GenresContext } from './components/GenresContext/GenresContext';
 
 const movieApi = new MovieApi();
 
 function App() {
-  const [actualKey, setActualKey] = useState();
+  const [actualKey, setActualKey] = useState<string>('1');
   const [loading, setLoading] = useState<boolean>(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [genreList, setGenreList] = useState<Genres[]>([]);
+
+  useEffect(() => {
+    movieApi.getGenres().then((item) => {
+      setGenreList(item);
+    });
+  }, []);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -30,9 +36,8 @@ function App() {
     };
   }, []);
 
-  const handleKey = (dataKey: any) => {
+  const handleKey = (dataKey: string) => {
     setActualKey(dataKey);
-    // console.log(actualKey);
   };
 
   const createGuestSession = async () => {
@@ -54,16 +59,18 @@ function App() {
 
   return (
     <>
-      {isOnline ? (
-        <div className="app">
-          <div className="cards">
-            <TopTabs onKeyChange={handleKey} />
-            <CardList actualKey={actualKey} setLoading={setLoading} loading={loading} />
+      <GenresContext.Provider value={genreList}>
+        {isOnline ? (
+          <div className="app">
+            <div className="cards">
+              <TopTabs onKeyChange={handleKey} />
+              <CardList actualKey={actualKey} setLoading={setLoading} loading={loading} />
+            </div>
           </div>
-        </div>
-      ) : (
-        <Alert message="Error" description="Отсутствует подключение к интернету :(" type="error" showIcon />
-      )}
+        ) : (
+          <Alert message="Error" description="Отсутствует подключение к интернету :(" type="error" showIcon />
+        )}
+      </GenresContext.Provider>
     </>
   );
 }

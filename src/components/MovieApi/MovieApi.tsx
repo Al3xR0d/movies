@@ -1,8 +1,9 @@
+import { GetOptions, PostOptions } from "../../types/types";
+
 export class MovieApi {
   url: string;
   key: string;
-  getOptions: object;
-  // postOptions: object;
+  getOptions: GetOptions;
 
   constructor() {
     this.url = 'https://api.themoviedb.org/3/';
@@ -17,7 +18,7 @@ export class MovieApi {
     };
   }
 
-  async getMovies(currNum: any) {
+  async getMovies(currNum: number) {
     const movies = this.url + `movie/popular?language=en-US&page=${currNum}`;
     const moviesResult = await this.getResults(movies, this.getOptions);
     return moviesResult;
@@ -35,12 +36,12 @@ export class MovieApi {
     return sessionResult;
   }
 
-  async setRating(id: number | string, sessionValue: string | null, rate: number) {
+  async setRating(id: number | string, sessionValue: string | null, rate: number | string) {
     const urlRating = this.url + `movie/${id}/rating?api_key=${this.key}&guest_session_id=${sessionValue}`;
     const body = {
       value: rate,
     };
-    const options = {
+    const options: PostOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json;charset=utf-8' },
       body: JSON.stringify(body),
@@ -59,11 +60,10 @@ export class MovieApi {
   async searchMovies(movie: string, currNum: number) {
     const searchUrl = this.url + `search/movie?api_key=${this.key}&query=${encodeURIComponent(movie)}&page=${currNum}`;
     const result = await this.getResults(searchUrl, this.getOptions);
-    // console.log(result);
     return result;
   }
 
-  async getResults(url: string, options: object) {
+  async getResults(url: string, options: GetOptions | PostOptions) {
     try {
       const response = await fetch(url, options);
       return await response.json();
