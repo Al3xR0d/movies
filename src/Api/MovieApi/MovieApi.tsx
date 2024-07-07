@@ -1,13 +1,31 @@
-import { GetOptions, PostOptions } from "../../types/types";
+export interface GetOptions {
+  method: string;
+  headers: {
+    accept: string;
+    Authorization: string;
+  };
+  signal?: AbortSignal | null;
+}
+
+export interface PostOptions {
+  method: string;
+  headers: Record<string, string>;
+  body: string;
+  signal?: AbortSignal | null;
+}
 
 export class MovieApi {
   url: string;
   key: string;
+  sessionValue: string | null;
+  controller: AbortController | null;
   getOptions: GetOptions;
 
   constructor() {
     this.url = 'https://api.themoviedb.org/3/';
     this.key = 'ec744888e3da6264e226b7c06599deae';
+    this.sessionValue = localStorage.getItem('guest_session_id');
+    this.controller = null;
     this.getOptions = {
       method: 'GET',
       headers: {
@@ -15,6 +33,7 @@ export class MovieApi {
         Authorization:
           'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYzc0NDg4OGUzZGE2MjY0ZTIyNmI3YzA2NTk5ZGVhZSIsInN1YiI6IjY2NzQ3Nzk5YWI3MTkyMDFiNzRlYjkzMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.iiXFJ015hzFI3p_3JDfF1rSLB-mFcXh2puyGSNwm_H4',
       },
+      signal: null,
     };
   }
 
@@ -36,8 +55,8 @@ export class MovieApi {
     return sessionResult;
   }
 
-  async setRating(id: number | string, sessionValue: string | null, rate: number | string) {
-    const urlRating = this.url + `movie/${id}/rating?api_key=${this.key}&guest_session_id=${sessionValue}`;
+  async setRating(id: number | string, rate: number | string) {
+    const urlRating = this.url + `movie/${id}/rating?api_key=${this.key}&guest_session_id=${this.sessionValue}`;
     const body = {
       value: rate,
     };
@@ -47,19 +66,33 @@ export class MovieApi {
       body: JSON.stringify(body),
     };
     const result = await this.getResults(urlRating, options);
-    return result;
+    // console.log(result);
+    return result.success;
   }
 
-  async getRatedMovies(sessionValue: string | null, pageNumber: number) {
+  async getRatedMovies(pageNumber: number) {
     const urlRatedMovies =
-      this.url + `guest_session/${sessionValue}/rated/movies?api_key=${this.key}&page=${pageNumber}`;
-    const result = await this.getResults(urlRatedMovies, this.getOptions);
-    return result;
+      this.url + `guest_session/${this.sessionValue}/rated/movies?api_key=${this.key}&page=${pageNumber}`;
+    try {
+      const result = await this.getResults(urlRatedMovies, this.getOptions);
+      return result;
+    } catch (err: any) {
+      if (err.response && err.response.status === 404) {
+        return { results: [], total_results: 0 };
+      } else {
+        throw err;
+      }
+    }
   }
 
-  async searchMovies(movie: string, currNum: number) {
+  async searchMovies(movie: string, currNum: number, signal: AbortSignal | null) {
+    if (this.controller) {
+      this.controller.abort();
+    }
+    this.controller = new AbortController();
     const searchUrl = this.url + `search/movie?api_key=${this.key}&query=${encodeURIComponent(movie)}&page=${currNum}`;
-    const result = await this.getResults(searchUrl, this.getOptions);
+    const newoptions = { ...this.getOptions, signal };
+    const result = await this.getResults(searchUrl, newoptions);
     return result;
   }
 
@@ -72,3 +105,5 @@ export class MovieApi {
     }
   }
 }
+
+export const movieApi = new MovieApi();

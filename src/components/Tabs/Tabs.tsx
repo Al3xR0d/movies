@@ -1,23 +1,23 @@
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import './Tabs.css';
-import { TabsType } from '../../types/types';
+import { TabKeys } from '../../types/types';
+
+export interface TabsType {
+  onKeyChange: (key: string) => void;
+}
 
 const items: TabsProps['items'] = [
   {
-    key: '1',
+    key: TabKeys.Search,
     label: 'Search',
   },
   {
-    key: '2',
+    key: TabKeys.Rated,
     label: 'Rated',
   },
 ];
 
 export function TopTabs({ onKeyChange }: TabsType) {
-  const handleKey = (key: string) => {
-    onKeyChange(key);
-  };
-
-  return <Tabs centered defaultActiveKey="1" items={items} onChange={handleKey} />;
+  return <Tabs centered defaultActiveKey="1" items={items} onChange={onKeyChange} />;
 }

@@ -2,24 +2,33 @@ import './Card.css';
 import { useContext, useState } from 'react';
 import { Tag, Rate } from 'antd';
 import { format, parseISO } from 'date-fns';
-import { MovieApi } from '../MovieApi/MovieApi';
-import { CardType } from '../../types/types';
+import { movieApi } from '../../Api/MovieApi/MovieApi';
 import { cutDescription, getRatingBorderColor } from '../../helpers/helpers';
 import { GenresContext } from '../GenresContext/GenresContext';
 
-const movieApi = new MovieApi();
+export interface CardProps {
+  title: string;
+  id: number | string;
+  date: string;
+  overview: string;
+  vote_average: number;
+  picture: string;
+  genres: number[];
+}
 
-export function Card({ title, id, date, overview, vote_average, picture, genres }: CardType) {
+export function Card({ title, id, date, overview, vote_average, picture, genres }: CardProps) {
   const [raiting, setRaiting] = useState<number | string>();
 
   const genreList = useContext(GenresContext);
 
   const value: number | undefined | string = localStorage.getItem(id as string) || raiting;
 
-  const setMovieRaiting = (e: number | string) => {
+  const setMovieRaiting = async (e: number | string) => {
     setRaiting(e);
-    movieApi.setRating(id, localStorage.getItem('guest_session_id'), e);
-    localStorage.setItem(id as string, e as string);
+    let res = await movieApi.setRating(id, e);
+    if (res) {
+      localStorage.setItem(id as string, e as string);
+    }
   };
 
   return (
@@ -58,7 +67,6 @@ export function Card({ title, id, date, overview, vote_average, picture, genres 
               className="stars"
               onChange={setMovieRaiting}
               count={10}
-              style={{ fontSize: '16px' }}
             />
           </div>
         </div>

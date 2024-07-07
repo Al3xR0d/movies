@@ -1,8 +1,13 @@
 import { Pagination } from 'antd';
 import './FooterPagination.css';
-import { Footer } from '../../types/types';
 
-export function FooterPagination({ onChange, currentPage, totalPages }: Footer) {
+export interface FooterProps {
+  onChange: (e: number) => void;
+  currentPage: number;
+  totalPages: number | undefined;
+}
+
+export function FooterPagination({ onChange, currentPage, totalPages }: FooterProps) {
   const total = totalPages && totalPages > 1000 ? 1000 : totalPages;
 
   return (

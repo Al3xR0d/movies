@@ -43,3 +43,7 @@
 .ant-tabs-tab-btn {
   padding: 10px;
 }
+
+.ant-pagination-options {
+  display: none !important;
+}
