@@ -1,13 +1,13 @@
 import { Pagination } from 'antd';
 import './FooterPagination.css';
 
-export interface FooterProps {
+interface Props {
   onChange: (e: number) => void;
   currentPage: number;
   totalPages: number | undefined;
 }
 
-export function FooterPagination({ onChange, currentPage, totalPages }: FooterProps) {
+export const FooterPagination = ({ onChange, currentPage, totalPages }: Props) => {
   const total = totalPages && totalPages > 1000 ? 1000 : totalPages;
 
   return (

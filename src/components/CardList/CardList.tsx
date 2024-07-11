@@ -2,7 +2,7 @@ import './CardList.css';
 import { MovieList } from '../../types/types';
 import { Card } from '../Card/Card';
 
-export function CardList({ movieList }: { movieList: MovieList[] }) {
+export const CardList = ({ movieList }: { movieList: MovieList[] }) => {
   return (
     <div className="cardList">
       {movieList?.map((item) => (
@@ -20,4 +20,4 @@ export function CardList({ movieList }: { movieList: MovieList[] }) {
       ))}
     </div>
   );
-}
+};

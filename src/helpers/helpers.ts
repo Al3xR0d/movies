@@ -27,7 +27,7 @@ export const createGuestSession = async () => {
       localStorage.setItem('guest_session_id', res.guest_session_id);
       localStorage.setItem('expires_at', res.expires_at);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
   return;

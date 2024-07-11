@@ -37,6 +37,13 @@ export class MovieApi {
     };
   }
 
+  abortPreviousRequest = () => {
+    if (this.controller) {
+      this.controller.abort();
+    }
+    this.controller = new AbortController();
+  };
+
   async getMovies(currNum: number) {
     const movies = this.url + `movie/popular?language=en-US&page=${currNum}`;
     const moviesResult = await this.getResults(movies, this.getOptions);
@@ -66,7 +73,6 @@ export class MovieApi {
       body: JSON.stringify(body),
     };
     const result = await this.getResults(urlRating, options);
-    // console.log(result);
     return result.success;
   }
 
@@ -85,13 +91,11 @@ export class MovieApi {
     }
   }
 
-  async searchMovies(movie: string, currNum: number, signal: AbortSignal | null) {
-    if (this.controller) {
-      this.controller.abort();
-    }
+  async searchMovies(movie: string, currNum: number) {
+    this.abortPreviousRequest();
     this.controller = new AbortController();
     const searchUrl = this.url + `search/movie?api_key=${this.key}&query=${encodeURIComponent(movie)}&page=${currNum}`;
-    const newoptions = { ...this.getOptions, signal };
+    const newoptions = { ...this.getOptions, signal: this.controller.signal };
     const result = await this.getResults(searchUrl, newoptions);
     return result;
   }

@@ -4,12 +4,12 @@ import { TopTabs } from './components/Tabs/Tabs';
 import { useEffect, useState } from 'react';
 import { movieApi } from './Api/MovieApi/MovieApi';
 import { Alert } from 'antd';
-import { Genres } from './types/types';
+import { Genres, TabKeys } from './types/types';
 import { GenresContext } from './components/GenresContext/GenresContext';
 import { createGuestSession, useOnlineStatus } from './helpers/helpers';
 
-function App() {
-  const [activeTab, setActualKey] = useState<string>('1');
+const App = () => {
+  const [activeTab, setActualKey] = useState<string>(TabKeys.Search);
   const [loading, setLoading] = useState<boolean>(false);
   const [genreList, setGenreList] = useState<Genres[]>([]);
   const isOnline = useOnlineStatus();
@@ -44,6 +44,6 @@ function App() {
       </GenresContext.Provider>
     </>
   );
-}
+};
 
 export default App;

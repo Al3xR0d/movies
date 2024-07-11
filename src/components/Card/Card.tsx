@@ -6,7 +6,7 @@ import { movieApi } from '../../Api/MovieApi/MovieApi';
 import { cutDescription, getRatingBorderColor } from '../../helpers/helpers';
 import { GenresContext } from '../GenresContext/GenresContext';
 
-export interface CardProps {
+interface Props {
   title: string;
   id: number | string;
   date: string;
@@ -16,7 +16,7 @@ export interface CardProps {
   genres: number[];
 }
 
-export function Card({ title, id, date, overview, vote_average, picture, genres }: CardProps) {
+export const Card = ({ title, id, date, overview, vote_average, picture, genres }: Props) => {
   const [raiting, setRaiting] = useState<number | string>();
 
   const genreList = useContext(GenresContext);
@@ -62,12 +62,7 @@ export function Card({ title, id, date, overview, vote_average, picture, genres 
             <div> {cutDescription(overview, 200)} </div>
           </div>
           <div className="satrsContainer">
-            <Rate
-              value={value as number}
-              className="stars"
-              onChange={setMovieRaiting}
-              count={10}
-            />
+            <Rate value={value as number} className="stars" onChange={setMovieRaiting} count={10} />
           </div>
         </div>
       </div>

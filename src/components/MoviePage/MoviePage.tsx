@@ -1,5 +1,5 @@
 import './MoviePage.css';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { movieApi } from '../../Api/MovieApi/MovieApi';
 import debounce from 'debounce';
 import { Input, Spin, Alert } from 'antd';
@@ -8,40 +8,23 @@ import { CardList } from '../CardList/CardList';
 import { FooterPagination } from '../FooterPagination/FooterPagination';
 import { TabKeys } from '../../types/types';
 
-export interface MoviePageTypes {
+interface Props {
   activeTab: string;
   setLoading: (item: boolean) => void;
   loading: boolean;
 }
 
-export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
+export const MoviePage = ({ activeTab, setLoading, loading }: Props) => {
   const [movieList, setMovieList] = useState<MovieList[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [ratedPage, setRatedPage] = useState<number>(1);
   const [searchText, setSearchText] = useState<string>('');
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  const request = useRef<AbortController | null>(null);
-
-  const getCurrPage = (page: number) => {
-    if (activeTab === TabKeys.Rated) {
-      setRatedPage(page);
-      getRatedMovies(page);
-    } else {
-      setCurrentPage(page);
-    }
-  };
-
   const search = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
     setCurrentPage(1);
   }, 1000);
-
-  const abortPreviousRequest = () => {
-    if (request.current) {
-      request.current.abort();
-    }
-  };
 
   const getRatedMovies = useCallback(
     (page: number) => {
@@ -49,12 +32,9 @@ export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
       movieApi
         .getRatedMovies(page)
         .then((item) => {
-          console.log(item);
           if (!item.results) {
-            console.log('тут нет саксесс');
             setMovieList([]);
           } else {
-            console.log('попали в элс');
             setMovieList(item.results);
             setTotalPages(item.total_results);
           }
@@ -66,6 +46,18 @@ export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
         .finally(() => setLoading(false));
     },
     [setLoading]
+  );
+
+  const getCurrPage = useCallback(
+    (page: number) => {
+      if (activeTab === TabKeys.Rated) {
+        setRatedPage(page);
+        getRatedMovies(page);
+      } else {
+        setCurrentPage(page);
+      }
+    },
+    [activeTab, getRatedMovies]
   );
 
   const getPopularMovies = useCallback(
@@ -86,44 +78,23 @@ export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
     [setLoading]
   );
 
-  const searchMovies = useCallback(
-    (text: string, page: number) => {
-      abortPreviousRequest();
-      const controller = new AbortController();
-      request.current = controller;
-      setLoading(true);
-      movieApi
-        .searchMovies(text, page, controller.signal)
-        .then((item) => {
-          //  console.log(item);
-          setMovieList(item.results);
-          setTotalPages(item.total_results);
-          // setLoading(false);
-        })
-        .catch((error) => {
-          if (error.name !== 'AbortError') {
-            // console.error(error);
-            console.error(error);
-            setMovieList([]);
-            // setLoading(false);
-          }
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) {
-            setLoading(false);
-          }
-        });
-    },
-    [setLoading]
-  );
-
   useEffect(() => {
     if (searchText.trim().length > 0) {
-      searchMovies(searchText, currentPage);
+      setLoading(true);
+      movieApi
+        .searchMovies(searchText, currentPage)
+        .then((item) => {
+          setMovieList(item.results);
+        })
+        .catch((error) => {
+          console.error(error);
+          setMovieList([]);
+        })
+        .finally(() => setLoading(false));
     } else {
       getPopularMovies(currentPage);
     }
-  }, [searchText, currentPage]);
+  }, [searchText, currentPage, setLoading, getPopularMovies]);
 
   useEffect(() => {
     if (activeTab === TabKeys.Rated) {
@@ -131,7 +102,7 @@ export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
     } else {
       getPopularMovies(currentPage);
     }
-  }, [activeTab]);
+  }, [activeTab, ratedPage, currentPage, getRatedMovies, getPopularMovies]);
 
   return (
     <>
@@ -166,4 +137,4 @@ export function MoviePage({ activeTab, setLoading, loading }: MoviePageTypes) {
       </div>
     </>
   );
-}
+};

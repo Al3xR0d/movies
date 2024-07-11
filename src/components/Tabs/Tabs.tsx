@@ -3,7 +3,7 @@ import type { TabsProps } from 'antd';
 import './Tabs.css';
 import { TabKeys } from '../../types/types';
 
-export interface TabsType {
+interface Props {
   onKeyChange: (key: string) => void;
 }
 
@@ -18,6 +18,6 @@ const items: TabsProps['items'] = [
   },
 ];
 
-export function TopTabs({ onKeyChange }: TabsType) {
-  return <Tabs centered defaultActiveKey="1" items={items} onChange={onKeyChange} />;
+export const TopTabs = ({ onKeyChange }: Props) => {
+  return <Tabs centered defaultActiveKey={TabKeys.Search} items={items} onChange={onKeyChange} />;
 }
